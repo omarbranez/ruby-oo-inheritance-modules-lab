@@ -1,30 +1,23 @@
 require 'pry'
+require_relative './concerns/memorable.rb'
+require_relative './concerns/findable.rb'
+require_relative './concerns/paramable.rb'
 
 class Artist
+  include Paramable, Memorable::InstanceMethods
+  extend Memorable::ClassMethods, Findable
   attr_accessor :name
   attr_reader :songs
 
   @@artists = []
 
   def initialize
-    @@artists << self
+    super # executes whats in the memorable module, but then can still start a new array for @songs
     @songs = []
-  end
-
-  def self.find_by_name(name)
-    @@artists.detect{|a| a.name == name}
   end
 
   def self.all
     @@artists
-  end
-
-  def self.reset_all
-    self.all.clear
-  end
-
-  def self.count
-    self.all.count
   end
 
   def add_song(song)
@@ -36,7 +29,4 @@ class Artist
     songs.each { |song| add_song(song) }
   end
 
-  def to_param
-    name.downcase.gsub(' ', '-')
-  end
 end
